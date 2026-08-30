@@ -75,7 +75,7 @@ const igrejas = [
 {codigo:"10363",nome:"IPDA SANTA CRUZ INDUSTRIAL"},
 {codigo:"10277",nome:"IPDA ELDORADO IV (FIRMO DE MATOS)"}
 ];
-const SENHA_PORTAL="86432568";let controle={aberto:false,encerrado:false};
+const SENHA_PORTAL="94278519";let controle={aberto:false,encerrado:false};
 function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function chave(i){return i.codigo+"_"+i.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_")}
 function mostrarPortal(){document.getElementById("login").style.display="none";document.getElementById("conteudo").style.display="block";iniciar()}
