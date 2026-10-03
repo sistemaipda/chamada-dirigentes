@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="pt-br"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Painel Administrativo</title>
+<style>
+:root{--p:#0b4aa2;--p2:#1670d2;--dark:#073779;--ok:#16834b;--bad:#c62828;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#687386;--line:#e5eaf1;--shadow:0 12px 32px rgba(15,35,65,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:18px}html,body{-webkit-touch-callout:none}img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;pointer-events:none}
+.container{max-width:1180px;margin:auto}.topo{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--dark),var(--p) 52%,var(--p2));color:#fff;padding:25px;border-radius:22px;margin-bottom:14px;box-shadow:0 18px 45px #09367133}.topo:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-100px;top:-130px;background:#fff1}.topo>*{position:relative;z-index:1}.topo h1{margin:5px 0;font-size:clamp(27px,4vw,36px)}.topo div{opacity:.82}
+.status{padding:15px 17px;border-radius:16px;text-align:center;font-weight:850;margin-bottom:14px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)}.aberto{color:#166b40;background:#f2fbf6}.fechado{color:#b42318;background:#fff6f6}
+.painel{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}.caixa{background:#fff;border:1px solid var(--line);padding:18px;border-radius:18px;box-shadow:var(--shadow);text-align:left}.caixa strong{display:block;font-size:34px;color:var(--p);margin-top:3px}
+.acoes{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--line);padding:12px;border-radius:18px;box-shadow:var(--shadow);margin-bottom:14px}.btn{border:0;border-radius:12px;padding:12px 15px;font-weight:850;cursor:pointer;transition:.15s}.btn:hover{transform:translateY(-1px)}.abrir{background:#e9f8ef;color:#146c3f}.encerrar{background:#ffeded;color:#b42318}.reabrir{background:#fff3e3;color:#a65300}.limparTudo{background:#f3eafa;color:#6a1b9a}
+.tabela{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}table{width:100%;border-collapse:collapse;min-width:850px}th{background:#f7f9fc;color:#516078;padding:13px 14px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.4px}td{padding:13px 14px;border-top:1px solid #edf0f5;font-size:14px}.limparLinha{background:#fff0f0;color:#b42318;padding:8px 10px;font-size:12px}.limparLinha:disabled{opacity:.45;cursor:not-allowed}.badge{display:inline-flex;padding:6px 9px;border-radius:999px;background:#e9f8ef;color:#146c3f;font-size:12px;font-weight:850}
+.login{position:fixed;inset:0;background:radial-gradient(circle at 20% 10%,#1b76d6,#0b4aa2 35%,#062b5f);display:flex;align-items:center;justify-content:center;padding:18px;z-index:99}.loginbox{background:#fff;max-width:420px;width:100%;padding:30px;border-radius:25px;text-align:center;box-shadow:0 25px 70px #0005}.loginlogo{width:auto;max-width:180px;height:auto;max-height:115px;object-fit:contain;margin:0 auto 18px;display:block}.loginbox h2{color:var(--p);margin:0}.loginbox p{color:var(--muted)}.senha-wrap{position:relative}.senha-wrap input{width:100%;height:54px;padding:0 52px 0 16px;border:1px solid var(--line);border-radius:13px;text-align:center;font-size:18px;letter-spacing:3px;outline:none}.icone-senha{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:25px;height:25px;object-fit:contain;opacity:.65}.entrar{width:100%;height:52px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:850;cursor:pointer;margin-top:10px}.erro{color:var(--bad);font-weight:800;min-height:20px;margin-top:10px}.loginrodape{font-size:11px!important;color:#8791a1!important;font-weight:700}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#172033;color:#fff;padding:13px 17px;border-radius:13px;box-shadow:0 12px 30px #0004;opacity:0;pointer-events:none;transition:.22s;z-index:200;font-weight:750;max-width:92vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.toast.success{background:#176b43}.toast.error{background:#a82424}
+@media(max-width:760px){body{padding:9px}.painel{grid-template-columns:1fr}.topo{border-radius:19px;padding:19px}.acoes{display:grid;grid-template-columns:1fr 1fr}.acoes .btn:last-child{grid-column:1/-1}}
+@media(max-width:470px){.acoes{grid-template-columns:1fr}.acoes .btn:last-child{grid-column:auto}}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script></head><body>
+
+<div id="login" class="login"><div class="loginbox">
+<img src="../logo.jpg" class="loginlogo" alt="Sistema IPDA" draggable="false" oncontextmenu="return false">
+<h2>Painel Administrativo</h2><p>Chamada de Dirigentes</p>
+<div class="senha-wrap"><input id="senha" type="password" inputmode="numeric" placeholder="Senha" autocomplete="current-password"><img src="../icone-senha.jpg" class="icone-senha" alt="" draggable="false" oncontextmenu="return false"></div>
+<button class="btn entrar" onclick="entrar()">Entrar</button>
+<p class="loginrodape">Sistema Administrativo IPDA Setorial Contagem</p>
+<div id="erro" class="erro"></div></div></div>
+
+<div id="app" class="container" style="display:none"><div class="topo"><h1>⚙️ Painel Administrativo</h1><div>Chamada de Dirigentes</div></div>
+<div id="status" class="status"></div><div class="painel">
+<div class="caixa">Total de igrejas<strong id="total">0</strong></div><div class="caixa">Preenchidas<strong id="preenchidas">0</strong></div><div class="caixa">Pendentes<strong id="pendentes">0</strong></div></div>
+<div class="acoes"><button class="btn abrir" onclick="abrir()">🟢 Liberar preenchimento</button><button class="btn encerrar" onclick="encerrar()">🔴 Encerrar preenchimento</button><button class="btn reabrir" onclick="reabrir()">🔄 Reabrir</button><button class="btn limparTudo" onclick="limparTudo()">🧹 Limpar tudo</button><button class="btn" onclick="location.href='../'">← Portal</button></div>
+<div class="tabela"><table><thead><tr><th>Código</th><th>Igreja</th><th>Dirigente</th><th>Pastor</th><th>Atualização</th><th>Ação</th></tr></thead><tbody id="tabela"></tbody></table></div></div><div id="toast" class="toast"></div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDa54rKMs0EYUTCKt4rPBU2fz3HjXd8eVQ",
+  authDomain: "chamada-dirigentes.firebaseapp.com",
+  databaseURL: "https://chamada-dirigentes-default-rtdb.firebaseio.com",
+  projectId: "chamada-dirigentes",
+  storageBucket: "chamada-dirigentes.firebasestorage.app",
+  messagingSenderId: "7168188388",
+  appId: "1:7168188388:web:fd2976fff907bdf493b1f1",
+  measurementId: "G-E2FSF0W7ZD"
+};
+firebase.initializeApp(firebaseConfig);const db=firebase.database();
+const igrejas = [
+ {codigo:"11789",nome:"IPDA SETORIAL CONTAGEM"},
+ {codigo:"11788",nome:"IPDA CANADÁ"},
+ {codigo:"11795",nome:"IPDA VILA ITÁLIA"},
+ {codigo:"11798",nome:"IPDA SANTA HELENA"},
+ {codigo:"18167",nome:"IPDA COLONIAL"},
+ {codigo:"11791",nome:"IPDA JARDIM MARROCOS"},
+ {codigo:"11796",nome:"IPDA PRAIA"},
+ {codigo:"11790",nome:"IPDA FUNCIONÁRIOS"},
+ {codigo:"11786",nome:"IPDA BERNARDO MONTEIRO"},
+ {codigo:"11785",nome:"IPDA BELA VISTA"},
+ {codigo:"11792",nome:"IPDA MARIA DA CONCEIÇÃO"},
+ {codigo:"11804",nome:"IPDA JARDIM MARACANÃ"},
+ {codigo:"11797",nome:"IPDA CHÁCARAS DEL REY"},
+ {codigo:"10341",nome:"IPDA PARQUE SÃO JOÃO"},
+ {codigo:"10319",nome:"IPDA JARDIM DOS BANDEIRANTES"},
+ {codigo:"10342",nome:"IPDA PEROBAS II"},
+ {codigo:"10322",nome:"IPDA DARCY VARGAS"},
+ {codigo:"10328",nome:"IPDA ELDORADO (DOS ÂNGICOS)"},
+ {codigo:"10334",nome:"IPDA NOVO ELDORADO"},
+ {codigo:"10269",nome:"IPDA ELDORADO (JOSÉ OLINTO FONTES)"},
+ {codigo:"10336",nome:"IPDA JARDIM RIACHO (RIO POTI)"},
+ {codigo:"10324",nome:"IPDA INCONFIDENTES"},
+ {codigo:"18271",nome:"IPDA ELDORADO II (JOÃO GOMES CARDOSO)"},
+ {codigo:"10277",nome:"IPDA ELDORADO IV (FIRMO DE MATOS)"},
+ {codigo:"10750",nome:"IPDA FLORENCA"},
+ {codigo:"12177",nome:"IPDA SAN MARINO"},
+ {codigo:"12169",nome:"IPDA LIBERDADE"},
+ {codigo:"10765",nome:"IPDA METROPOLITANO"},
+ {codigo:"12163",nome:"IPDA VENEZA"},
+ {codigo:"12168",nome:"IPDA ALTEROSA"},
+ {codigo:"12188",nome:"IPDA VEREDA"},
+ {codigo:"12190",nome:"IPDA FLORENCA"},
+ {codigo:"10771",nome:"IPDA SAO FRANCISCO DE ASSIS"},
+ {codigo:"10767",nome:"IPDA SAN GENARO"},
+ {codigo:"10768",nome:"IPDA SAN GENARO"},
+ {codigo:"12186",nome:"IPDA VENEZA I"},
+ {codigo:"12171",nome:"IPDA NAPOLIS"},
+ {codigo:"12187",nome:"IPDA VENEZA II"},
+ {codigo:"12189",nome:"IPDA BELVEDERE"},
+ {codigo:"10754",nome:"IPDA MIRANTE PALMITAL"},
+ {codigo:"10751",nome:"IPDA ANDIROBA"},
+ {codigo:"10752",nome:"IPDA JARDIM DAS OLIVEIRAS"},
+{codigo:"xxxxx",nome:"IPDA AGUA BRANCA"},
+ {codigo:"10753",nome:"IPDA MEDITERRANEO"},
+ {codigo:"10755",nome:"IPDA NOVO ORIENTE"},
+ {codigo:"10756",nome:"IPDA PARQUE NOVO CEASA (MELO VIANA)"},
+ {codigo:"10761",nome:"IPDA SAO JOSE"},
+ {codigo:"10762",nome:"IPDA TIJUCO"},
+ {codigo:"10763",nome:"IPDA MELO VIANA"},
+ {codigo:"10759",nome:"IPDA SANTA CECILIA"},
+ {codigo:"10757",nome:"IPDA SANTA CECILIA I"},
+ {codigo:"10758",nome:"IPDA SANTA CECILIA II"},
+ {codigo:"10769",nome:"IPDA VALE DAS ACACIAS"},
+ {codigo:"10766",nome:"IPDA FAZENDA CASTRO"},
+ {codigo:"10332",nome:"IPDA JARDIM LAGUNA"},
+ {codigo:"10262",nome:"IPDA COLORADO"},
+ {codigo:"10335",nome:"IPDA NOVO PROGRESSO"},
+ {codigo:"11302",nome:"IPDA VILA PEROLA"},
+{codigo:"xxxxx",nome:"IPDA CONJUNTO H. SAPOLIO"},
+ {codigo:"10278",nome:"IPDA JARDIM FILADELFIA"},
+ {codigo:"10333",nome:"IPDA MORADA NOVA"},
+ {codigo:"10264",nome:"IPDA GLORIA"},
+ {codigo:"11299",nome:"IPDA SAO JOAQUIM"},
+ {codigo:"11291",nome:"IPDA JARDIM GUANABARA"},
+ {codigo:"11296",nome:"IPDA PARQUE TURISTAS"},
+ {codigo:"10344",nome:"IPDA PINDORAMA"},
+ {codigo:"10267",nome:"IPDA COQUEIROS"},
+ {codigo:"11294",nome:"IPDA NACIONAL"},
+ {codigo:"11288",nome:"IPDA BOM JESUS"},
+ {codigo:"11276",nome:"IPDA BRAUNAS"},
+ {codigo:"11286",nome:"IPDA URCA"},
+ {codigo:"11289",nome:"IPDA CONFISCO"},
+ {codigo:"11300",nome:"IPDA SAO MATEUS"},
+ {codigo:"10631",nome:"IPDA VILA BISPO DE MAURA"},
+ {codigo:"11290",nome:"IPDA ESTRELA DALVA"},
+ {codigo:"11304",nome:"IPDA NOVO BOA VISTA"},
+ {codigo:"11782",nome:"IPDA PETROLANDIA"},
+ {codigo:"11801",nome:"IPDA SAPUCAIAS I"},
+ {codigo:"11800",nome:"IPDA SAO LUIZ"},
+ {codigo:"18056",nome:"IPDA NASCENTES IMPERIAIS"}
+];
+const SENHA_ADMIN="86432568";
+const controleRef=db.ref("chamadaDirigentesControle"),dadosRef=db.ref("chamadaDirigentes");
+let iniciado=false,controleListener=null,dadosListener=null,controle={aberto:false,encerrado:false},dados={},operando=false,toastTimer;
+function esc(t){return String(t??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function chave(i){return i.codigo+"_"+i.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_")}
+function toast(msg,tipo=""){const e=document.getElementById("toast");e.textContent=msg;e.className="toast show "+tipo;clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.className="toast",3400)}
+function mostrarAdmin(){document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";iniciar()}
+function entrar(){const s=document.getElementById("senha");if(s.value===SENHA_ADMIN){sessionStorage.setItem("chamadaDirigentesAdminLogin","ok");document.getElementById("erro").textContent="";mostrarAdmin()}else{document.getElementById("erro").textContent="Senha incorreta.";s.select()}}
+function iniciar(){if(iniciado)return;iniciado=true;controleListener=s=>{controle=s.val()||{aberto:false,encerrado:false};status()};dadosListener=s=>{dados=s.val()||{};render()};controleRef.on("value",controleListener);dadosRef.on("value",dadosListener)}
+function pararListeners(){if(controleListener){controleRef.off("value",controleListener);controleListener=null}if(dadosListener){dadosRef.off("value",dadosListener);dadosListener=null}iniciado=false}
+function status(){const e=document.getElementById("status");if(controle.encerrado){e.className="status fechado";e.textContent="🔴 PREENCHIMENTO ENCERRADO"}else if(controle.aberto){e.className="status aberto";e.textContent="🟢 PREENCHIMENTO LIBERADO"}else{e.className="status fechado";e.textContent="⏳ PREENCHIMENTO NÃO LIBERADO"}}
+function render(){let p=0,h="";igrejas.forEach(i=>{const r=dados[chave(i)];if(r){p++;h+=`<tr><td><b>${esc(i.codigo)}</b></td><td>${esc(i.nome)}</td><td>${esc(r.dirigente)}</td><td><span class="badge">${esc(r.pastor)}</span></td><td>${r.atualizadoEm?esc(new Date(r.atualizadoEm).toLocaleString("pt-BR")):"-"}</td><td><button class="btn limparLinha" data-id="${esc(chave(i))}" data-nome="${esc(i.nome)}">🧹 Limpar</button></td></tr>`}else h+=`<tr><td><b>${esc(i.codigo)}</b></td><td>${esc(i.nome)}</td><td colspan="2">— Não preenchido —</td><td>—</td><td><button class="btn limparLinha" disabled>🧹 Limpar</button></td></tr>`});document.getElementById("tabela").innerHTML=h;document.getElementById("total").textContent=igrejas.length;document.getElementById("preenchidas").textContent=p;document.getElementById("pendentes").textContent=igrejas.length-p}
+async function setControle(v){if(operando){toast("Aguarde a operação atual terminar.");return}operando=true;try{await controleRef.set({...v,atualizadoEm:new Date().toISOString()});toast("Status atualizado com sucesso.","success")}catch(e){console.error(e);toast("Não foi possível atualizar o status.","error")}finally{operando=false}}
+function abrir(){if(confirm("Liberar o preenchimento da chamada?"))setControle({aberto:true,encerrado:false})}
+function encerrar(){if(confirm("Encerrar o preenchimento? Ninguém poderá alterar pelo portal."))setControle({aberto:false,encerrado:true})}
+function reabrir(){if(confirm("Reabrir o preenchimento?"))setControle({aberto:true,encerrado:false})}
+async function limpar(id,nome){if(operando){toast("Aguarde a operação atual terminar.");return}if(!confirm("Limpar o preenchimento de "+nome+"?\n\nA igreja ficará disponível para ser preenchida novamente."))return;operando=true;try{await dadosRef.child(id).remove();toast("Preenchimento limpo com sucesso.","success")}catch(e){console.error(e);toast("Não foi possível limpar o preenchimento.","error")}finally{operando=false}}
+async function limparTudo(){if(operando){toast("Aguarde a operação atual terminar.");return}if(!confirm("ATENÇÃO!\n\nIsso vai apagar TODOS os preenchimentos da chamada.\n\nDeseja realmente limpar tudo?"))return;operando=true;try{await dadosRef.remove();toast("Todos os preenchimentos foram limpos.","success")}catch(e){console.error(e);toast("Não foi possível limpar tudo.","error")}finally{operando=false}}
+document.getElementById("btnEntrar").addEventListener("click",entrar);document.getElementById("senha").addEventListener("keydown",e=>{if(e.key==="Enter")entrar()});
+document.getElementById("btnAbrir").addEventListener("click",abrir);document.getElementById("btnEncerrar").addEventListener("click",encerrar);document.getElementById("btnReabrir").addEventListener("click",reabrir);document.getElementById("btnLimparTudo").addEventListener("click",limparTudo);document.getElementById("btnPortal").addEventListener("click",()=>location.href="../");
+document.getElementById("tabela").addEventListener("click",e=>{const b=e.target.closest(".limparLinha");if(b&&!b.disabled)limpar(b.dataset.id,b.dataset.nome)});
+document.addEventListener("contextmenu",e=>{if(e.target.tagName==="IMG")e.preventDefault()});document.addEventListener("dragstart",e=>{if(e.target.tagName==="IMG")e.preventDefault()});
+window.addEventListener("pagehide",pararListeners);
+if(sessionStorage.getItem("chamadaDirigentesAdminLogin")==="ok")mostrarAdmin();
+</script></body></html>
