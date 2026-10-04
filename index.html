@@ -1,0 +1,486 @@
+<!DOCTYPE html><html lang="pt-br"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chamada de Dirigentes</title>
+<style>
+:root{
+  --primary:#168fa9;
+  --primary-dark:#11768b;
+  --primary-soft:#eaf7fa;
+  --text:#263238;
+  --muted:#6f7b83;
+  --bg:#f5f7f8;
+  --card:#fff;
+  --line:#e2e7ea;
+  --ok:#16834b;
+  --bad:#c62828;
+  --shadow:0 4px 16px rgba(31,55,70,.08);
+  --shadow-hover:0 8px 24px rgba(31,55,70,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  padding:0;
+}
+html,body{-webkit-touch-callout:none}
+img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;pointer-events:none}
+
+.logo{
+  text-align:center;
+  background:#fff;
+  padding:16px 18px 10px;
+  border-bottom:1px solid var(--line);
+}
+.logo img{
+  width:min(100%,420px);
+  max-height:92px;
+  object-fit:contain;
+}
+
+.topo{
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  padding:18px max(16px,calc((100% - 1080px)/2));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.topo:after{
+  content:"";
+  position:absolute;
+  width:170px;height:170px;
+  border-radius:50%;
+  right:-80px;top:-100px;
+  background:var(--primary-soft);
+}
+.topo>*{position:relative;z-index:1}
+.topo-marca{display:flex;align-items:center;gap:12px;min-width:0}
+.topo-icone{
+  width:42px;height:42px;flex:0 0 42px;
+  border-radius:5px;
+  display:grid;place-items:center;
+  background:var(--primary);
+  color:#fff;
+  font-size:20px;font-weight:900;
+  box-shadow:0 5px 14px rgba(22,143,169,.2);
+}
+.topo-kicker{
+  display:block;
+  color:var(--primary);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.9px;
+  margin-bottom:2px;
+}
+.topo h2{
+  margin:0;
+  color:var(--text);
+  font-size:clamp(21px,4vw,30px);
+  line-height:1.15;
+}
+.data-chip{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+  text-transform:capitalize;
+}
+
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:12px 15px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.15s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+
+#conteudo{
+  width:min(1080px,calc(100% - 28px));
+  margin:20px auto 40px;
+}
+.pesquisa{
+  width:100%;
+  height:50px;
+  padding:0 16px;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:#fff;
+  color:var(--text);
+  font-size:15px;
+  outline:none;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.10),0 1px 2px rgba(31,55,70,.05);
+}
+.pesquisa::placeholder{color:#98a2a8}
+.pesquisa:focus{
+  border-color:#75bfcd;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.08),0 0 0 3px rgba(22,143,169,.10);
+}
+
+.resumo,.aviso{
+  background:#fff;
+  border:1px solid var(--line);
+  padding:13px 16px;
+  border-radius:5px;
+  margin:12px 0;
+  font-size:14px;
+  font-weight:750;
+  box-shadow:0 2px 8px rgba(31,55,70,.04);
+  color:#526069;
+}
+.resumo strong{color:var(--primary-dark)}
+.aviso{color:#176b43;background:#f1fbf6;border-color:#d8eee3}
+.bloqueado{background:#fff7f7;color:#b42318;border-color:#f0dddd}
+
+.lista{display:grid;gap:10px;overflow:visible}
+.card{
+  background:var(--card);
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  box-shadow:0 2px 7px rgba(31,55,70,.08),0 1px 2px rgba(0,0,0,.04);
+  transition:.18s;
+}
+.card:hover{box-shadow:0 4px 12px rgba(31,55,70,.10)}
+.igreja{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  margin-bottom:12px;
+  padding-bottom:11px;
+  border-bottom:1px solid #edf0f2;
+}
+.codigo{
+  background:var(--primary-soft);
+  color:var(--primary-dark);
+  border:1px solid #d6eef2;
+  padding:6px 9px;
+  border-radius:3px;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.nome{
+  font-size:15px;
+  font-weight:800;
+  line-height:1.35;
+  color:#303b41;
+}
+
+.form{
+  display:grid;
+  grid-template-columns:minmax(0,1.5fr) minmax(190px,.7fr);
+  gap:9px;
+}
+.campo{
+  width:100%;
+  height:46px;
+  padding:0 13px;
+  border:1px solid #d9e0e4;
+  border-radius:2px;
+  background:#fbfcfd;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.10),0 1px 1px rgba(0,0,0,.03);
+  color:var(--text);
+  font-size:14px;
+  outline:none;
+}
+.campo:focus{
+  border-color:#75bfcd;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.06),0 0 0 3px rgba(22,143,169,.10);
+  background:#fff;
+}
+.salvar{
+  width:100%;
+  height:44px;
+  margin-top:9px;
+  border-radius:2px;
+  background:var(--primary);
+  color:#fff;
+  font-size:14px;
+}
+.salvar:hover{background:var(--primary-dark)}
+.salvar:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.18)}
+.mensagem{
+  text-align:center;
+  color:var(--ok);
+  font-size:12px;
+  font-weight:800;
+  display:none;
+  margin-top:7px;
+}
+
+.login{
+  position:fixed;
+  inset:0;
+  background:#f2f7f8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:99;
+}
+.loginbox{
+  background:#fff;
+  width:min(410px,100%);
+  padding:30px 26px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  text-align:center;
+  box-shadow:0 15px 45px rgba(31,55,70,.12);
+}
+.loginlogo{
+  display:block;
+  width:auto;
+  max-width:185px;
+  max-height:105px;
+  object-fit:contain;
+  margin:0 auto 16px;
+}
+.loginbox h2{color:var(--primary-dark);margin:0;font-size:23px}
+.loginbox p{color:var(--muted);font-size:14px}
+.loginbox input{
+  width:100%;
+  height:50px;
+  padding:0 16px;
+  border:1px solid #d9e0e4;
+  border-radius:3px;
+  text-align:center;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.10);
+  font-size:17px;
+  letter-spacing:3px;
+  outline:none;
+}
+.loginbox input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(22,143,169,.10);
+}
+.entrar{
+  width:100%;
+  background:var(--primary);
+  color:#fff;
+  margin-top:10px;
+  height:48px;
+}
+.entrar:hover{background:var(--primary-dark)}
+.erro{color:var(--bad);font-weight:800;min-height:20px;margin-top:10px}
+.loginrodape{font-size:11px!important;color:#8791a1!important;font-weight:700}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translate(-50%,20px);
+  background:#263238;
+  color:#fff;
+  padding:12px 16px;
+  border-radius:10px;
+  box-shadow:0 10px 26px rgba(0,0,0,.18);
+  opacity:0;
+  pointer-events:none;
+  transition:.22s;
+  z-index:200;
+  font-weight:750;
+  max-width:92vw;
+  text-align:center;
+  font-size:13px;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.success{background:#176b43}
+.toast.error{background:#a82424}
+
+@media(max-width:700px){
+  .logo{padding:12px 14px 8px}
+  .logo img{max-height:72px}
+  .topo{padding:15px 14px;align-items:flex-start}
+  .topo-icone{width:38px;height:38px;flex-basis:38px;border-radius:10px}
+  .topo-kicker{font-size:9px}
+  .topo h2{font-size:20px}
+  .data-chip{font-size:11px;padding-top:5px}
+  #conteudo{width:calc(100% - 18px);margin-top:14px}
+  .form{grid-template-columns:1fr}
+  .card{padding:13px}
+}
+
+@media(max-width:450px){
+  .data-chip{display:none}
+  .igreja{align-items:flex-start}
+  .codigo{font-size:10px;padding:5px 7px}
+  .nome{font-size:14px}
+  .campo{height:45px}
+  .salvar{height:43px}
+}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script></head><body>
+
+<div id="login" class="login"><div class="loginbox">
+<img src="logo.jpg" class="loginlogo" alt="Sistema IPDA" draggable="false" oncontextmenu="return false">
+<h2>Chamada de Dirigentes</h2>
+<p>Digite a senha para acessar o portal.</p>
+<div class="senha-wrap"><input id="senha" type="password" inputmode="numeric" placeholder="Senha" autocomplete="current-password"><img src="icone-senha.jpg" class="icone-senha" alt="" draggable="false" oncontextmenu="return false"></div>
+<button class="btn entrar" onclick="entrar()">Acessar portal</button>
+<p class="loginrodape">Sistema Administrativo IPDA Setorial Contagem</p>
+<div id="erro" class="erro"></div></div></div>
+
+<div class="logo"><img src="logo-ipda.png" alt="Logo IPDA"></div>
+<div class="topo"><div class="topo-marca"><span class="topo-icone">✓</span><div><span class="topo-kicker">SISTEMA ADMINISTRATIVO IPDA</span><h2>Chamada de Dirigentes</h2></div></div><div class="data-chip" id="data"></div></div>
+<div id="estado"></div><div id="conteudo" style="display:none">
+<input id="pesquisa" class="pesquisa" placeholder="🔍 Pesquisar igreja ou código..." onkeyup="filtrar()">
+<div class="resumo" id="resumo"></div><div class="lista" id="lista"></div></div><div id="toast" class="toast"></div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDa54rKMs0EYUTCKt4rPBU2fz3HjXd8eVQ",
+  authDomain: "chamada-dirigentes.firebaseapp.com",
+  databaseURL: "https://chamada-dirigentes-default-rtdb.firebaseio.com",
+  projectId: "chamada-dirigentes",
+  storageBucket: "chamada-dirigentes.firebasestorage.app",
+  messagingSenderId: "7168188388",
+  appId: "1:7168188388:web:fd2976fff907bdf493b1f1",
+  measurementId: "G-E2FSF0W7ZD"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const igrejas = [
+ {codigo:"11789",nome:"IPDA SETORIAL CONTAGEM"},
+ {codigo:"11788",nome:"IPDA CANADÁ"},
+ {codigo:"11795",nome:"IPDA VILA ITÁLIA"},
+ {codigo:"11798",nome:"IPDA SANTA HELENA"},
+ {codigo:"18167",nome:"IPDA COLONIAL"},
+ {codigo:"11791",nome:"IPDA JARDIM MARROCOS"},
+ {codigo:"11796",nome:"IPDA PRAIA"},
+ {codigo:"11790",nome:"IPDA FUNCIONÁRIOS"},
+ {codigo:"11786",nome:"IPDA BERNARDO MONTEIRO"},
+ {codigo:"11785",nome:"IPDA BELA VISTA"},
+ {codigo:"11792",nome:"IPDA MARIA DA CONCEIÇÃO"},
+ {codigo:"11804",nome:"IPDA JARDIM MARACANÃ"},
+ {codigo:"11797",nome:"IPDA CHÁCARAS DEL REY"},
+ {codigo:"10341",nome:"IPDA PARQUE SÃO JOÃO"},
+ {codigo:"10319",nome:"IPDA JARDIM DOS BANDEIRANTES"},
+ {codigo:"10342",nome:"IPDA PEROBAS II"},
+ {codigo:"10322",nome:"IPDA DARCY VARGAS"},
+ {codigo:"10328",nome:"IPDA ELDORADO (DOS ÂNGICOS)"},
+ {codigo:"10334",nome:"IPDA NOVO ELDORADO"},
+ {codigo:"10269",nome:"IPDA ELDORADO (JOSÉ OLINTO FONTES)"},
+ {codigo:"10336",nome:"IPDA JARDIM RIACHO (RIO POTI)"},
+ {codigo:"10324",nome:"IPDA INCONFIDENTES"},
+ {codigo:"18271",nome:"IPDA ELDORADO II (JOÃO GOMES CARDOSO)"},
+ {codigo:"10277",nome:"IPDA ELDORADO IV (FIRMO DE MATOS)"},
+ {codigo:"10750",nome:"IPDA FLORENCA"},
+ {codigo:"12177",nome:"IPDA SAN MARINO"},
+ {codigo:"12169",nome:"IPDA LIBERDADE"},
+ {codigo:"10765",nome:"IPDA METROPOLITANO"},
+ {codigo:"12163",nome:"IPDA VENEZA"},
+ {codigo:"12168",nome:"IPDA ALTEROSA"},
+ {codigo:"12188",nome:"IPDA VEREDA"},
+ {codigo:"12190",nome:"IPDA FLORENCA"},
+ {codigo:"10771",nome:"IPDA SAO FRANCISCO DE ASSIS"},
+ {codigo:"10767",nome:"IPDA SAN GENARO"},
+ {codigo:"10768",nome:"IPDA SAN GENARO"},
+ {codigo:"12186",nome:"IPDA VENEZA I"},
+ {codigo:"12171",nome:"IPDA NAPOLIS"},
+ {codigo:"12187",nome:"IPDA VENEZA II"},
+ {codigo:"12189",nome:"IPDA BELVEDERE"},
+ {codigo:"10754",nome:"IPDA MIRANTE PALMITAL"},
+ {codigo:"10751",nome:"IPDA ANDIROBA"},
+ {codigo:"10752",nome:"IPDA JARDIM DAS OLIVEIRAS"},
+{codigo:"xxxxx",nome:"IPDA AGUA BRANCA"},
+ {codigo:"10753",nome:"IPDA MEDITERRANEO"},
+ {codigo:"10755",nome:"IPDA NOVO ORIENTE"},
+ {codigo:"10756",nome:"IPDA PARQUE NOVO CEASA (MELO VIANA)"},
+ {codigo:"10761",nome:"IPDA SAO JOSE"},
+ {codigo:"10762",nome:"IPDA TIJUCO"},
+ {codigo:"10763",nome:"IPDA MELO VIANA"},
+ {codigo:"10759",nome:"IPDA SANTA CECILIA"},
+ {codigo:"10757",nome:"IPDA SANTA CECILIA I"},
+ {codigo:"10758",nome:"IPDA SANTA CECILIA II"},
+ {codigo:"10769",nome:"IPDA VALE DAS ACACIAS"},
+ {codigo:"10766",nome:"IPDA FAZENDA CASTRO"},
+ {codigo:"10332",nome:"IPDA JARDIM LAGUNA"},
+ {codigo:"10262",nome:"IPDA COLORADO"},
+ {codigo:"10335",nome:"IPDA NOVO PROGRESSO"},
+ {codigo:"11302",nome:"IPDA VILA PEROLA"},
+{codigo:"xxxxx",nome:"IPDA CONJUNTO H. SAPÓLIO"},
+ {codigo:"10278",nome:"IPDA JARDIM FILADELFIA"},
+ {codigo:"10333",nome:"IPDA MORADA NOVA"},
+ {codigo:"10264",nome:"IPDA GLORIA"},
+ {codigo:"11299",nome:"IPDA SAO JOAQUIM"},
+ {codigo:"11291",nome:"IPDA JARDIM GUANABARA"},
+ {codigo:"11296",nome:"IPDA PARQUE TURISTAS"},
+ {codigo:"10344",nome:"IPDA PINDORAMA"},
+ {codigo:"10267",nome:"IPDA COQUEIROS"},
+ {codigo:"11294",nome:"IPDA NACIONAL"},
+ {codigo:"11288",nome:"IPDA BOM JESUS"},
+ {codigo:"11276",nome:"IPDA BRAUNAS"},
+ {codigo:"11286",nome:"IPDA URCA"},
+ {codigo:"11289",nome:"IPDA CONFISCO"},
+ {codigo:"11300",nome:"IPDA SAO MATEUS"},
+ {codigo:"10631",nome:"IPDA VILA BISPO DE MAURA"},
+ {codigo:"11290",nome:"IPDA ESTRELA DALVA"},
+ {codigo:"11304",nome:"IPDA NOVO BOA VISTA"},
+ {codigo:"11782",nome:"IPDA PETROLANDIA"},
+ {codigo:"11801",nome:"IPDA SAPUCAIAS I"},
+ {codigo:"11800",nome:"IPDA SAO LUIZ"},
+ {codigo:"18056",nome:"IPDA NASCENTES IMPERIAIS"}
+];
+const SENHA_PORTAL="75217891";
+const controleRef=db.ref("chamadaDirigentesControle");
+const dadosRef=db.ref("chamadaDirigentes");
+let controle={aberto:false,encerrado:false},dados={};
+let iniciado=false,controleListener=null,dadosListener=null;
+const salvando=new Set();let toastTimer;
+
+function esc(t){return String(t??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function chave(i){return i.codigo+"_"+i.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_")}
+function toast(msg,tipo=""){const e=document.getElementById("toast");e.textContent=msg;e.className="toast show "+tipo;clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.className="toast",3200)}
+function mostrarPortal(){document.getElementById("login").style.display="none";document.getElementById("conteudo").style.display="block";iniciar()}
+function entrar(){const s=document.getElementById("senha");if(s.value===SENHA_PORTAL){sessionStorage.setItem("chamadaDirigentesLogin","ok");document.getElementById("erro").textContent="";mostrarPortal()}else{document.getElementById("erro").textContent="Senha incorreta.";s.select()}}
+function iniciar(){
+ if(iniciado)return; iniciado=true; montar();
+ document.getElementById("data").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+ controleListener=s=>{controle=s.val()||{aberto:false,encerrado:false};estado()};
+ dadosListener=s=>{dados=s.val()||{};carregar()};
+ controleRef.on("value",controleListener);dadosRef.on("value",dadosListener);
+}
+function pararListeners(){if(controleListener){controleRef.off("value",controleListener);controleListener=null}if(dadosListener){dadosRef.off("value",dadosListener);dadosListener=null}iniciado=false}
+function montar(){
+ let h="";igrejas.forEach((i,n)=>h+=`<div class="card item" data-nome="${esc(i.nome).toLowerCase()}" data-codigo="${esc(i.codigo)}">
+ <div class="igreja"><div class="codigo">${esc(i.codigo)}</div><div class="nome">${esc(i.nome)}</div></div>
+ <div class="form"><input class="campo" id="nome_${n}" maxlength="100" placeholder="Nome do dirigente" autocomplete="name"><select class="campo" id="pastor_${n}"><option value="">Selecione...</option><option value="Primeiro Pastor">1º Pastor</option><option value="Segundo Pastor">2º Pastor</option></select></div>
+ <button class="btn salvar" type="button" onclick="salvar(${n})">💾 Salvar chamada</button><div class="mensagem" id="msg_${n}">✓ Chamada registrada</div></div>`);
+ document.getElementById("lista").innerHTML=h;
+}
+function estado(){const e=document.getElementById("estado");if(controle.encerrado)e.innerHTML='<div class="aviso bloqueado">PREENCHIMENTO NÃO DISPONÍVEL</div>';else if(!controle.aberto)e.innerHTML='<div class="aviso bloqueado">PREENCHIMENTO NÃO DISPONÍVEL</div>';else e.innerHTML='<div class="aviso">🟢 Preenchimento liberado.</div>'}
+function carregar(){
+ let p=0;igrejas.forEach((i,n)=>{const r=dados[chave(i)],a=document.getElementById("nome_"+n),b=document.getElementById("pastor_"+n);if(!a||!b)return;if(r){p++;if(document.activeElement!==a)a.value=r.dirigente||"";if(document.activeElement!==b)b.value=r.pastor||""}else{if(document.activeElement!==a)a.value="";if(document.activeElement!==b)b.value=""}});
+ document.getElementById("resumo").innerHTML=`Igrejas: <strong>${igrejas.length}</strong> &nbsp;|&nbsp; Preenchidas: <strong>${p}</strong>`;
+}
+async function salvar(n){
+ const i=igrejas[n],id=chave(i);if(salvando.has(id)){toast("Este salvamento já está em andamento.");return}
+ if(!controle.aberto||controle.encerrado){toast("O preenchimento não está liberado.","error");return}
+ const nome=document.getElementById("nome_"+n).value.trim(),pastor=document.getElementById("pastor_"+n).value;
+ if(!nome){toast("Digite o nome do dirigente.","error");document.getElementById("nome_"+n).focus();return}
+ if(!pastor){toast("Selecione 1º ou 2º Pastor.","error");document.getElementById("pastor_"+n).focus();return}
+ salvando.add(id);
+ try{
+   const c=(await controleRef.once("value")).val()||{};if(!c.aberto||c.encerrado){toast("O preenchimento foi encerrado antes do salvamento.","error");return}
+   await dadosRef.child(id).set({codigo:i.codigo,igreja:i.nome,dirigente:nome,pastor:pastor,atualizadoEm:new Date().toISOString()});
+   const m=document.getElementById("msg_"+n);m.style.display="block";clearTimeout(m._timer);m._timer=setTimeout(()=>m.style.display="none",3000);toast("Chamada salva com sucesso.","success");
+ }catch(err){console.error(err);toast("Não foi possível salvar. Verifique a conexão.","error")}finally{salvando.delete(id)}
+}
+function filtrar(){const f=document.getElementById("pesquisa").value.toLowerCase().trim();document.querySelectorAll(".item").forEach(x=>x.style.display=(!f||x.dataset.nome.includes(f)||x.dataset.codigo.includes(f))?"block":"none")}
+const campoSenha=document.getElementById("senha");if(campoSenha)campoSenha.addEventListener("keydown",e=>{if(e.key==="Enter")entrar()});
+const campoPesquisa=document.getElementById("pesquisa");if(campoPesquisa)campoPesquisa.addEventListener("input",filtrar);
+document.addEventListener("contextmenu",e=>{if(e.target.tagName==="IMG")e.preventDefault()});
+document.addEventListener("dragstart",e=>{if(e.target.tagName==="IMG")e.preventDefault()});
+window.addEventListener("pagehide",pararListeners);
+if(sessionStorage.getItem("chamadaDirigentesLogin")==="ok")mostrarPortal();
+</script></body></html>
